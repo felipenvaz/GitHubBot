@@ -1,0 +1,6 @@
+{
+    "typescript.updateImportsOnFileMove.enabled": "never",
+    "typescript.preferences.quoteStyle": "single",
+    "editor.formatOnSave": true,
+    "editor.tabSize": 4,
+}
