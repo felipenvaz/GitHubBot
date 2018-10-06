@@ -12,6 +12,7 @@
     "noUnusedLocals": false,
     "pretty": true,
     "strict": true,
+    "strictNullChecks": false,
     "sourceMap": true,
     "outDir": "./lib",
     "skipLibCheck": true,

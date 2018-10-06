@@ -1,2 +1,4 @@
-?auto merge approved PRs (with positive verification, ex: build passed)
+?check if was bot commit, if yes do nothing
+?auto merge approved PRs (with positive verification, ex: build passed (Status API))
 ?add everybody as reviewer (could require a reviwers file at the root, with the user list (Contents Api)
+logger (console, file, loggly?)

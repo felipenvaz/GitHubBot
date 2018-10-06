@@ -1,7 +1,7 @@
 import { fetch } from './../fetch';
 import { GITHUB_URL } from './../constants';
 import IEvent from '../interfaces/IEvent';
-import { DEBUG } from '../env';
+import EHttpCode from '../enums/EHttpCode';
 
 export interface IListRepositoryEventsParams {
     owner: string;
@@ -13,23 +13,22 @@ export default interface IListRepositoryEventsResponse {
     xPollInterval: number;
     eTag: string;
     events: IEvent[];
+    notModified?: boolean;
 }
 
 export const listRepositoryEvents = async ({ owner, repository, eTag }: IListRepositoryEventsParams): Promise<IListRepositoryEventsResponse> => {
     return fetch(`${GITHUB_URL}repos/${owner}/${repository}/events`, {
         headers: {
-            ETag: eTag || ''
+            'If-None-Match': eTag || ''
         }
     }).then(async res => {
-        const events = await res.json();
-        const xPollIntervalString = res.headers.get('x-poll-interval');
-        if (DEBUG)
-            console.log(`${repository} returned a ${xPollIntervalString} polling interval`);
-
+        const xPollInterval = parseInt(res.headers.get('x-poll-interval') || '60', 10);
+        const events = (res.status === 200 ? await res.json() : []);
         return {
             events,
             eTag: res.headers.get('etag') as string,
-            xPollInterval: parseInt(xPollIntervalString || '60', 10)
+            xPollInterval: xPollInterval,
+            notModified: res.status === EHttpCode.notModified
         }
     });
 };
