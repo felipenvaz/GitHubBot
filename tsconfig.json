@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    "allowJs": false,
+    "allowJs": true,
     "lib": [
-      "es2015",
       "es2017"
     ],
     "module": "commonjs",
@@ -10,7 +9,7 @@
     "target": "es5",
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "pretty": true,
     "strict": true,
     "sourceMap": true,
@@ -18,10 +17,10 @@
     "skipLibCheck": true,
     "noImplicitAny": false,
     "esModuleInterop": true,
-    "declaration": true
+    "noUnusedParameters": false
   },
   "include": [
     "src/**/*"
   ],
-  "compileOnSave": false
+  "compileOnSave": true
 }

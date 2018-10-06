@@ -1,0 +1,2 @@
+?auto merge approved PRs (with positive verification, ex: build passed)
+?add everybody as reviewer (could require a reviwers file at the root, with the user list (Contents Api)
