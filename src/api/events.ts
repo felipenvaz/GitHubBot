@@ -2,6 +2,7 @@ import { fetch } from './../fetch';
 import { GITHUB_URL } from './../constants';
 import IEvent from '../interfaces/IEvent';
 import EHttpCode from '../enums/EHttpCode';
+import { MIN_POLLING_TIME_SECONDS } from '../env';
 
 export interface IListRepositoryEventsParams {
     owner: string;
@@ -22,7 +23,7 @@ export const listRepositoryEvents = async ({ owner, repository, eTag }: IListRep
             'If-None-Match': eTag || ''
         }
     }).then(async res => {
-        const xPollInterval = parseInt(res.headers.get('x-poll-interval') || '60', 10);
+        const xPollInterval = parseInt(res.headers.get('x-poll-interval') || MIN_POLLING_TIME_SECONDS.toString(), 10);
         const events = (res.status === 200 ? await res.json() : []);
         return {
             events,

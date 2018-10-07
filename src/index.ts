@@ -1,4 +1,4 @@
-import { ORGANIZATION, ONLY_NEW_EVENTS } from './env';
+import { ORGANIZATION, ONLY_NEW_EVENTS, MIN_POLLING_TIME_SECONDS } from './env';
 import { listRepositories } from './api/repositories';
 import IRepository from './interfaces/IRepository';
 import { merge, IMergeResult } from './api/merge';
@@ -96,13 +96,13 @@ const wait = async (seconds: number) => {
   }
 
   while (true) {
-    let pollInterval = 60;
+    let pollInterval = MIN_POLLING_TIME_SECONDS;
     try {
       pollInterval = await checkEvents();
       logger.log(`Done checking for events`);
     } catch (exception) {
       logger.log(JSON.stringify(exception), ELogType.error);
     }
-    await wait(Math.max(pollInterval, 60));
+    await wait(Math.max(pollInterval, MIN_POLLING_TIME_SECONDS));
   }
 })();
