@@ -6,10 +6,9 @@ import { listRepositoryEvents } from './api/events';
 import IPushEvent from './interfaces/IPushEvent';
 import { getBranchType } from './util';
 import EBranch from './enums/EBranch';
-import { DEBUG } from './env';
 import { createPullRequest } from './api/pullRequest';
 import IPullRequest from './interfaces/IPullRequest';
-import { fetch } from './fetch';
+import logger, { ELogType } from './logger';
 
 const initialDate = new Date();
 
@@ -49,15 +48,13 @@ const wait = async (seconds: number) => {
       });
 
       if (notModified) {
-        if (DEBUG)
-          console.log(`Branch ${repo.name} had no new events`);
+        logger.log(`Branch ${repo.name} had no new events`);
       } else {
         eTags[repo.name] = eTag;
         maxPollInterval = Math.max(maxPollInterval, xPollInterval);
         for (const event of events) {
           if (ONLY_NEW_EVENTS && (new Date(event.created_at)) < initialDate) {
-            if (DEBUG)
-              console.log(`Stoping event analysis because events were before initial date.`);
+            logger.log(`Stoping event analysis because events happened before initial date.`);
             break;
           }
 
@@ -69,7 +66,6 @@ const wait = async (seconds: number) => {
           }
         }
 
-        console.log(`MERGE: branch ${repo.name} master:${mergeMaster} release:${mergeRelease}`);
         let mergeResponse: IMergeResult = null;
         if (mergeMaster) {
           mergeResponse = await merge({
@@ -100,11 +96,13 @@ const wait = async (seconds: number) => {
   }
 
   while (true) {
-    if (DEBUG)
-      console.log((new Date()).toTimeString());
-    const pollInterval = await checkEvents();
-    if (DEBUG)
-      console.log(`Done checking for events`);
+    let pollInterval = 60;
+    try {
+      pollInterval = await checkEvents();
+      logger.log(`Done checking for events`);
+    } catch (exception) {
+      logger.log(JSON.stringify(exception), ELogType.error);
+    }
     await wait(Math.max(pollInterval, 60));
   }
 })();
