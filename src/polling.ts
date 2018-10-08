@@ -9,6 +9,8 @@ import EBranch from './enums/EBranch';
 import { createPullRequest } from './api/pullRequest';
 import IPullRequest from './interfaces/IPullRequest';
 import logger, { ELogType } from './logger';
+import { fetch } from './fetch';
+import { GITHUB_URL } from './constants';
 
 const initialDate = new Date();
 
@@ -54,7 +56,7 @@ const wait = async (seconds: number) => {
         maxPollInterval = Math.max(maxPollInterval, xPollInterval);
         for (const event of events) {
           if (ONLY_NEW_EVENTS && (new Date(event.created_at)) < initialDate) {
-            logger.log(`Stoping event analysis because events happened before initial date.`);
+            logger.log(`Branch ${repo.name} - Stoping event analysis because events happened before initial date.`);
             break;
           }
 
@@ -72,8 +74,7 @@ const wait = async (seconds: number) => {
             owner: repo.owner.login,
             repository: repo.name,
             base: EBranch.release,
-            head: EBranch.master,
-            commit_message: `Bot - Merge ${EBranch.master} into ${EBranch.release}`
+            head: EBranch.master
           });
         }
 
@@ -82,8 +83,7 @@ const wait = async (seconds: number) => {
             owner: repo.owner.login,
             repository: repo.name,
             base: EBranch.develop,
-            head: EBranch.release,
-            commit_message: `Bot - Merge ${EBranch.release} into ${EBranch.develop}`
+            head: EBranch.release
           });
         }
 
