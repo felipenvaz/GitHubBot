@@ -3,8 +3,8 @@ import { PORT } from './env';
 import { push } from './gitHandlers/push';
 import logger, { ELogType } from './logger';
 import IPush from './interfaces/IPush';
-import { createBranch } from './api/branch';
-import { createPullRequest } from './api/pullRequest';
+import { isValidSecret } from './util';
+import { pullRequest } from './gitHandlers/pullRequest';
 
 const app = express();
 app.use(express.json());
@@ -15,6 +15,12 @@ app.get('/', (req, res) => {
 
 app.post('/github', async (req, res) => {
     try {
+        const secret = req.get('X-Hub-Signature');
+        if (!isValidSecret(secret, req.body)) {
+            res.sendStatus(401);
+            return;
+        }
+
         const eventType = req.get('X-GitHub-Event');
         if (eventType)
             switch (eventType) {
@@ -22,6 +28,9 @@ app.post('/github', async (req, res) => {
                     const pushBody = req.body as IPush;
                     await logger.log(`Push event on branch ${pushBody.repository.full_name}`);
                     await push(pushBody);
+                    break;
+                case 'pull_request':
+                    await pullRequest(req.body);
                     break;
             }
         res.sendStatus(200);
@@ -32,14 +41,3 @@ app.post('/github', async (req, res) => {
 });
 
 app.listen(PORT, () => logger.log(`App listening on port ${PORT}`));
-
-/* (async () => {
-    const response = await createPullRequest({
-        owner: 'HippoCMMS',
-        repository: 'LoginSite',
-        base: 'release',
-        head: 'test/bot',
-        title: 'test pr'
-    });
-    console.log(response);
-})(); */

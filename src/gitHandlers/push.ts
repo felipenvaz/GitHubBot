@@ -9,11 +9,8 @@ import ICommit from '../interfaces/ICommit';
 import { createBranch } from '../api/branch';
 import { createPullRequest, addAssignees } from '../api/pullRequest';
 
-export const push = async ({ pusher, ref, repository, commits, head_commit }: IPush) => {
-    if (pusher.name === BOT_NAME) {
-        logger.log(`Bot ${pusher.name} was the push author`);
-        return;
-    }
+export const push = async ({ pusher, ref, repository, commits, head_commit, deleted }: IPush) => {
+    if (deleted) return;
 
     const branchType = getBranchType(ref);
     let mergeSuccess = true;

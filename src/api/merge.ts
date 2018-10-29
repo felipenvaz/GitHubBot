@@ -13,6 +13,9 @@ export interface IMergeParams {
 
 export interface IMergeResult {
     conflict: boolean;
+    nothingToMerge: boolean;
+    sha?: string;
+    created: boolean;
 }
 
 export const merge = async ({ owner, repository, base, head, commit_message }: IMergeParams): Promise<IMergeResult> => {
@@ -25,12 +28,17 @@ export const merge = async ({ owner, repository, base, head, commit_message }: I
             head,
             commit_message
         })
-    }).then(res => {
+    }).then(async res => {
+        let nothingToMerge = false;
+        let sha = null;
         switch (res.status) {
             case EHttpCode.created:
+                const body = await res.json();
+                sha = body.sha;
                 logger.log(`Merge commit created`);
                 break;
             case EHttpCode.noContent:
+                nothingToMerge = true;
                 logger.log(`There was nothing to merge`);
                 break;
             case EHttpCode.conflict:
@@ -38,6 +46,11 @@ export const merge = async ({ owner, repository, base, head, commit_message }: I
                 break;
         }
 
-        return { conflict: res.status === EHttpCode.conflict };
+        return {
+            conflict: res.status === EHttpCode.conflict,
+            created: res.status === EHttpCode.created,
+            nothingToMerge,
+            sha
+        };
     });
 }

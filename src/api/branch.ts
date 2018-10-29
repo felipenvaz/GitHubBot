@@ -13,8 +13,6 @@ export const createBranch = async (owner: string, repository: string, ref: strin
         })
     }).then(async res => {
         const content = await res.json();
-        console.log(content);
-        console.log(res.status);
         if (res.status === EHttpCode.created) {
             logger.log(`Branch ${content.ref} created`);
             return { ref: content.ref };
@@ -22,5 +20,14 @@ export const createBranch = async (owner: string, repository: string, ref: strin
             logger.log(JSON.stringify(content.message), ELogType.warning);
             return { error: content.message, already_exists: res.status === EHttpCode.unprocessableEntity };
         }
+    });
+}
+
+export const deleteBranch = async (owner: string, repository: string, ref: string) => {
+    return fetch(`${GITHUB_URL}repos/${owner}/${repository}/git/refs/heads/${ref}`, {
+        method: 'DELETE'
+    }).then(async res => {
+        if (res.status === EHttpCode.noContent) return true;
+        else return false;
     });
 }

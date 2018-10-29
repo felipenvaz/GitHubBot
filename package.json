@@ -13,7 +13,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "nodemon --exec \"npm start\"",
-    "start": "node ./index.js"
+    "start": "node ./index.js",
+    "merge": "node ./lib/polling.js"
   },
   "dependencies": {
     "dotenv": "^6.0.0",

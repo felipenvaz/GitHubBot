@@ -9,5 +9,5 @@ export default interface IPush {
     forced: boolean;
     repository: IRepository;
     pusher: { name: string };
-    head_commit: { id: string; }
+    head_commit?: { id: string; }
 }

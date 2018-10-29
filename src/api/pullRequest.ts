@@ -43,6 +43,7 @@ export const createPullRequest = async ({ owner, repository, base, head, title, 
 export interface ICreateReviewRequestParams {
     owner: string;
     repository: string;
+    number: number;
     reviewers?: string[];
     team_reviewers?: string[];
 }
@@ -52,8 +53,8 @@ export interface ICreateReviewRequestResponse {
     pullRequest?: IPullRequest;
 }
 
-export const createReviewRequest = async ({ owner, repository, reviewers, team_reviewers }: ICreateReviewRequestParams): Promise<ICreateReviewRequestResponse> => {
-    return fetch(`${GITHUB_URL}repos/${owner}/${repository}/pulls`, {
+export const createReviewRequest = async ({ owner, repository, reviewers, team_reviewers, number }: ICreateReviewRequestParams): Promise<ICreateReviewRequestResponse> => {
+    return fetch(`${GITHUB_URL}repos/${owner}/${repository}/pulls/${number}/requested_reviewers`, {
         method: 'POST',
         body: JSON.stringify({
             reviewers,

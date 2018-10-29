@@ -1,108 +1,66 @@
-import { ORGANIZATION, ONLY_NEW_EVENTS, MIN_POLLING_TIME_SECONDS } from './env';
+import { ORGANIZATION } from './env';
 import { listRepositories } from './api/repositories';
 import IRepository from './interfaces/IRepository';
-import { merge, IMergeResult } from './api/merge';
-import { listRepositoryEvents } from './api/events';
-import IPushEvent from './interfaces/IPushEvent';
-import { getBranchType } from './util';
+import { merge } from './api/merge';
 import EBranch from './enums/EBranch';
-import { createPullRequest } from './api/pullRequest';
-import IPullRequest from './interfaces/IPullRequest';
 import logger, { ELogType } from './logger';
-import { fetch } from './fetch';
-import { GITHUB_URL } from './constants';
-
-const initialDate = new Date();
-
-const wait = async (seconds: number) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve();
-    }, seconds * 1000);
-  });
-}
+import { createTag } from './api/tag';
 
 (async () => {
+  const version = process.argv[2];
+  if (!version || !(/v[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/).test(version)) {
+    logger.log(`Invalid version number`, ELogType.error);
+    return;
+  }
+
   const repositories: IRepository[] =
-    [
+    /* [
       {
-        name: 'LoginSite',
-        full_name: 'HippoCMMS/LoginSite',
-        owner: { login: 'HippoCMMS' }
+        name: 'KpiDashboard',
+        full_name: 'HippoCMMS/KpiDashboard',
+        owner: { login: 'HippoCMMS' },
+        archived: false
       }
-    ];
-  //await listRepositories(ORGANIZATION);
-  const eTags: { [repoName: string]: string } = repositories.reduce(
-    (acc, repo) => ({ ...acc, [repo.name]: '' })
-    , {});
+    ]; */
+    await listRepositories(ORGANIZATION);
 
-  const checkEvents = async () => {
-    let maxPollInterval = 0;
+  const nothingToMerge = [];
+  const conflicts = [];
+  const merged = [];
 
-    for (const repo of repositories) {
-      let mergeMaster = false;
-      let mergeRelease = false;
+  for (const repository of repositories) {
+    if (repository.archived) continue;
 
-      const { xPollInterval, eTag, events, notModified } = await listRepositoryEvents({
-        owner: repo.owner.login,
-        repository: repo.name,
-        eTag: eTags[repo.name]
-      });
+    const {
+      owner,
+      name
+    } = repository;
 
-      if (notModified) {
-        logger.log(`Branch ${repo.name} had no new events`);
-      } else {
-        eTags[repo.name] = eTag;
-        maxPollInterval = Math.max(maxPollInterval, xPollInterval);
-        for (const event of events) {
-          if (ONLY_NEW_EVENTS && (new Date(event.created_at)) < initialDate) {
-            logger.log(`Branch ${repo.name} - Stoping event analysis because events happened before initial date.`);
-            break;
-          }
+    const response = await merge({
+      owner: owner.login,
+      repository: name,
+      base: EBranch.master,
+      head: EBranch.release
+    });
 
-          if (event.type === 'PushEvent') {
-            const { payload } = event as IPushEvent;
-            const branch = getBranchType(payload.ref);
-            mergeMaster = branch === EBranch.master || mergeMaster;
-            mergeRelease = branch === EBranch.master || branch === EBranch.release || mergeRelease;
-          }
-        }
-
-        let mergeResponse: IMergeResult = null;
-        if (mergeMaster) {
-          mergeResponse = await merge({
-            owner: repo.owner.login,
-            repository: repo.name,
-            base: EBranch.release,
-            head: EBranch.master
-          });
-        }
-
-        if (mergeRelease && (mergeResponse === null || !mergeResponse.conflict)) {
-          mergeResponse = await merge({
-            owner: repo.owner.login,
-            repository: repo.name,
-            base: EBranch.develop,
-            head: EBranch.release
-          });
-        }
-
-        //TODO if conflict happens, create new branch, open PR and make the commit owner(s) as PR assignees (should also message on slack)
-        //TODO maybe when creating PR, a PR already exists. 
+    if (response.nothingToMerge) nothingToMerge.push(name);
+    else if (response.conflict) conflicts.push(name);
+    else if (response.created) {
+      merged.push(name);
+      try {
+        await createTag({
+          owner: owner.login,
+          repository: name,
+          sha: response.sha,
+          version
+        });
+      } catch (exception) {
+        logger.log(JSON.stringify(exception), ELogType.error);
       }
     }
-
-    return maxPollInterval;
   }
 
-  while (true) {
-    let pollInterval = MIN_POLLING_TIME_SECONDS;
-    try {
-      pollInterval = await checkEvents();
-      logger.log(`Done checking for events`);
-    } catch (exception) {
-      logger.log(JSON.stringify(exception), ELogType.error);
-    }
-    await wait(Math.max(pollInterval, MIN_POLLING_TIME_SECONDS));
-  }
+  logger.log(`Merged: ${merged.join(', ')}`);
+  logger.log(`Conflict: ${conflicts.join(', ')}`);
+  logger.log(`Nothing to merge: ${nothingToMerge.join(', ')}`);
 })();
