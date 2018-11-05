@@ -7,8 +7,10 @@ import logger, { ELogType } from './logger';
 import { createTag } from './api/tag';
 
 (async () => {
-  const version = process.argv[2];
-  if (!version || !(/v[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/).test(version)) {
+  const [, , type, version] = process.argv;
+  const isProd = type === 'prod';
+
+  if (isProd && (!version || !(/v[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/).test(version))) {
     logger.log(`Invalid version number`, ELogType.error);
     return;
   }
@@ -27,6 +29,8 @@ import { createTag } from './api/tag';
   const nothingToMerge = [];
   const conflicts = [];
   const merged = [];
+  const base = isProd ? EBranch.master : EBranch.release;
+  const head = isProd ? EBranch.release : EBranch.develop;
 
   for (const repository of repositories) {
     if (repository.archived) continue;
@@ -36,11 +40,13 @@ import { createTag } from './api/tag';
       name
     } = repository;
 
+
+
     const response = await merge({
       owner: owner.login,
       repository: name,
-      base: EBranch.master,
-      head: EBranch.release
+      base,
+      head
     });
 
     if (response.nothingToMerge) nothingToMerge.push(name);
@@ -48,12 +54,13 @@ import { createTag } from './api/tag';
     else if (response.created) {
       merged.push(name);
       try {
-        await createTag({
-          owner: owner.login,
-          repository: name,
-          sha: response.sha,
-          version
-        });
+        if (isProd)
+          await createTag({
+            owner: owner.login,
+            repository: name,
+            sha: response.sha,
+            version
+          });
       } catch (exception) {
         logger.log(JSON.stringify(exception), ELogType.error);
       }

@@ -14,7 +14,8 @@
     "build": "tsc -p tsconfig.json",
     "dev": "nodemon --exec \"npm start\"",
     "start": "node ./index.js",
-    "merge": "node ./lib/polling.js"
+    "merge:prod": "node ./lib/createTstProdBuild.js prod",
+    "merge:test": "node ./lib/createTstProdBuild.js test"
   },
   "dependencies": {
     "dotenv": "^6.0.0",
