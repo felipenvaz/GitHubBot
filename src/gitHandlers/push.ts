@@ -8,9 +8,10 @@ import logger from '../logger';
 import ICommit from '../interfaces/ICommit';
 import { createBranch } from '../api/branch';
 import { createPullRequest, addAssignees } from '../api/pullRequest';
+const appSettings = require('../../appSettings.json');
 
 export const push = async ({ pusher, ref, repository, commits, head_commit, deleted }: IPush) => {
-    if (deleted) return;
+    if (deleted || appSettings.ignored_repos.includes(repository.name)) return;
 
     const branchType = getBranchType(ref);
     let mergeSuccess = true;

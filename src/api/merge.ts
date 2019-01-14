@@ -35,14 +35,14 @@ export const merge = async ({ owner, repository, base, head, commit_message }: I
             case EHttpCode.created:
                 const body = await res.json();
                 sha = body.sha;
-                logger.log(`Merge commit created`);
+                logger.log(`${repository}: Merge commit created`);
                 break;
             case EHttpCode.noContent:
                 nothingToMerge = true;
-                logger.log(`There was nothing to merge`);
+                logger.log(`${repository}: There was nothing to merge`);
                 break;
             case EHttpCode.conflict:
-                logger.log(`There was a merge conflict`);
+                logger.log(`${repository}: There was a merge conflict`);
                 break;
         }
 

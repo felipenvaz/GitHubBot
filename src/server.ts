@@ -40,4 +40,5 @@ app.post('/github', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => logger.log(`App listening on port ${PORT}`));
+const port = PORT || 31435;
+app.listen(port, () => logger.log(`App listening on port ${port}`));
