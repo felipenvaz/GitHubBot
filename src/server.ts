@@ -5,9 +5,11 @@ import logger, { ELogType } from './logger';
 import IPush from './interfaces/IPush';
 import { isValidSecret } from './util';
 import { pullRequest } from './gitHandlers/pullRequest';
+import bodyParser from 'body-parser';
 
 const app = express();
-app.use(express.json());
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.get('/', (req, res) => {
     res.send(`I'm a bot`);
