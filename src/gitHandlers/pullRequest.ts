@@ -8,9 +8,9 @@ export const pullRequest = async ({ action, pull_request }: IPullRequestEvent) =
     switch (action) {
         case "closed":
             if (pull_request.merged) {
-                const { head: { ref, repo: { name, owner } } } = pull_request;
+                const { head: { ref, repo: { name: repository, owner } } } = pull_request;
                 if (ref === EBranch.develop || ref === EBranch.release || ref === EBranch.master) return;
-                await deleteBranch(owner.login, name, ref);
+                await deleteBranch(owner.login, repository, ref);
             }
             break;
         case "opened":

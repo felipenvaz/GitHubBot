@@ -4,7 +4,7 @@ import EHttpCode from '../enums/EHttpCode';
 import logger, { ELogType } from '../logger';
 
 export const createBranch = async (owner: string, repository: string, ref: string, sha: string) => {
-    logger.log(`Creating branch ${ref} on ${repository}`);
+    logger.log(`Creating branch ${repository}/${ref}`);
     return fetch(`${GITHUB_URL}repos/${owner}/${repository}/git/refs`, {
         method: 'POST',
         body: JSON.stringify({
@@ -24,10 +24,16 @@ export const createBranch = async (owner: string, repository: string, ref: strin
 }
 
 export const deleteBranch = async (owner: string, repository: string, ref: string) => {
+    logger.log(`Trying to delete branch ${ref} on ${repository}`);
     return fetch(`${GITHUB_URL}repos/${owner}/${repository}/git/refs/heads/${ref}`, {
         method: 'DELETE'
     }).then(async res => {
-        if (res.status === EHttpCode.noContent) return true;
-        else return false;
+        if (res.status === EHttpCode.noContent) {
+            logger.log(`Branch ${repository}/${ref} deleted`);
+            return true;
+        } else {
+            logger.log(`There was an error deleting branch ${repository}/${ref}`, ELogType.warning);
+            return false;
+        }
     });
 }
