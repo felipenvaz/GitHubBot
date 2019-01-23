@@ -15,6 +15,7 @@ export const pullRequest = async ({ action, pull_request }: IPullRequestEvent) =
             break;
         case "opened":
         case "reopened":
+        case "synchronize":
             const { head: { ref, repo: { name, owner } }, number, user } = pull_request;
             await createReviewRequest({
                 owner: owner.login,
