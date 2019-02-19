@@ -44,6 +44,9 @@ export const merge = async ({ owner, repository, base, head, commit_message }: I
             case EHttpCode.conflict:
                 logger.log(`${repository}: There was a merge conflict`);
                 break;
+            default:
+                logger.log(`${repository}: Merge responded ${res.status}`);
+                break;
         }
 
         return {

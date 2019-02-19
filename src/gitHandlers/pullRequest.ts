@@ -1,8 +1,9 @@
 import IPullRequestEvent from '../interfaces/IPullRequestEvent';
 import EBranch from '../enums/EBranch';
 import { deleteBranch } from '../api/branch';
-import { createReviewRequest } from '../api/pullRequest';
+import { createReviewRequest, addComment } from '../api/pullRequest';
 const appSettings = require('../../appSettings.json');
+const prQuotes = require('../../prQuotes.json');
 
 export const pullRequest = async ({ action, pull_request }: IPullRequestEvent) => {
     switch (action) {
@@ -23,6 +24,17 @@ export const pullRequest = async ({ action, pull_request }: IPullRequestEvent) =
                 number,
                 reviewers: [...appSettings.default_reviewers.filter(u => u !== user.login)]
             })
+
+            if (action === "opened" && prQuotes.enablePrQuotes && prQuotes.coolGuys.includes(user.login)) {
+                const quotes: string[] = prQuotes.quotes;
+                const pos = Math.floor(Math.random() * quotes.length);
+                await addComment({
+                    owner: owner.login,
+                    repository: name,
+                    issueNumber: number,
+                    comment: quotes[pos]
+                })
+            }
             break;
     }
 }

@@ -54,6 +54,7 @@ export interface ICreateReviewRequestResponse {
 }
 
 export const createReviewRequest = async ({ owner, repository, reviewers, team_reviewers, number }: ICreateReviewRequestParams): Promise<ICreateReviewRequestResponse> => {
+    logger.log(`${repository}: Adding reviewers to PR #${number}`);
     return fetch(`${GITHUB_URL}repos/${owner}/${repository}/pulls/${number}/requested_reviewers`, {
         method: 'POST',
         body: JSON.stringify({
@@ -63,8 +64,10 @@ export const createReviewRequest = async ({ owner, repository, reviewers, team_r
     }).then(async res => {
         const content = await res.json();
         if (res.status === EHttpCode.created) {
+            logger.log(`${repository}: Added reviewers to PR #${number}`);
             return { pullRequest: content };
         } else {
+            logger.log(`${repository}: Errors when adding reviewers to PR #${number}. ${JSON.stringify(content)}`);
             return { errors: content.errors };
         }
     });
@@ -99,3 +102,22 @@ export const addAssignees = async ({ owner, repository, assignees, issueNumber }
         }
     });
 };
+
+export interface IAddCommentParams {
+    owner: string;
+    repository: string;
+    comment: string;
+    issueNumber: number;
+}
+
+export const addComment = async ({ owner, repository, comment, issueNumber }: IAddCommentParams) => {
+    return fetch(`${GITHUB_URL}repos/${owner}/${repository}/issues/${issueNumber}/comments`, {
+        method: 'POST',
+        body: JSON.stringify({
+            body: comment
+        })
+    }).then(async res => {
+        const content = await res.json();
+        return { status: res.status, content };
+    });
+}
