@@ -40,8 +40,6 @@ import { createTag } from './api/tag';
       name
     } = repository;
 
-
-
     const response = await merge({
       owner: owner.login,
       repository: name,
@@ -70,4 +68,6 @@ import { createTag } from './api/tag';
   logger.log(`Merged: ${merged.join(', ')}`);
   logger.log(`Conflict: ${conflicts.join(', ')}`);
   logger.log(`Nothing to merge: ${nothingToMerge.join(', ')}`);
-})();
+})().catch(error => {
+  logger.log(JSON.stringify(error), ELogType.error);
+});
