@@ -6,8 +6,12 @@ import IPush from './interfaces/IPush';
 import { isValidSecret } from './util';
 import { pullRequest } from './gitHandlers/pullRequest';
 import bodyParser from 'body-parser';
-import { addComment } from './api/pullRequest';
+import * as fs from 'fs';
 
+const dir = './logs';
+if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+}
 
 const app = express();
 app.use(bodyParser.json({ limit: '50mb' }));
