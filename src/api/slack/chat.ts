@@ -1,12 +1,12 @@
-import { SLACK_URL } from '../../constants';
-import { slackFetch } from './slackFetch';
+import { WebClient } from '@slack/web-api';
+import { SLACK_TOKEN } from '../../env';
 
+export interface IPostMessageParams {
+    channel: string;
+    text: string;
+}
 
-export const getChatList = () => {
-    return slackFetch(`${SLACK_URL}conversations.list?types=public_channel,private_channel`, {
-        method: 'GET',
-    }).then(async res => {
-        const response = await res.json();
-        console.log(response);
-    });
+export const postMessage = async (params: IPostMessageParams) => {
+    const web = new WebClient(SLACK_TOKEN);
+    return await web.chat.postMessage(params);
 }
