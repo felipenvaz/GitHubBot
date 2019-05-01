@@ -7,3 +7,4 @@ export const MIN_POLLING_TIME_SECONDS = parseInt(process.env.MIN_POLLING_TIME_SE
 export const PORT = process.env.PORT;
 export const ONLY_NEW_EVENTS = process.env.ONLY_NEW_EVENTS === 'true';
 export const GITHUB_WEBHOOK_SECRET = process.env.GITHUB_WEBHOOK_SECRET;
+export const SLACK_TOKEN = process.env.SLACK_TOKEN;
