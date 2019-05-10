@@ -1,0 +1,70 @@
+{
+    "members": [
+        {
+            "id": "U37GRTL94",
+            "realName": "Kevin Simpson",
+            "name": "ksimpson",
+            "githubName": "HippoKevin"
+        },
+        {
+            "id": "U4CN0KSM8",
+            "realName": "Felipe Nunes Vaz",
+            "name": "felipenvaz",
+            "githubName": "felipenvaz"
+        },
+        {
+            "id": "U6YK2U285",
+            "realName": "Peter Heasler",
+            "name": "peterheasler",
+            "githubName": "PeterHeasler"
+        },
+        {
+            "id": "U7DJXQ68G",
+            "realName": "Chris Ventura",
+            "name": "c.ventura",
+            "githubName": "chrisventura"
+        },
+        {
+            "id": "U98V76SE7",
+            "realName": "Kyle Cherewyk",
+            "name": "k.cherewyk",
+            "githubName": "KyleCherewyk"
+        },
+        {
+            "id": "UA8FBK60N",
+            "realName": "Darcy Miranda",
+            "name": "d.miranda",
+            "githubName": "darcymiranda"
+        },
+        {
+            "id": "UAQ8UD4AJ",
+            "realName": "Martin David-O'Shea",
+            "name": "m.davidoshea",
+            "githubName": "mdavidoshea"
+        },
+        {
+            "id": "UF50AARC2",
+            "realName": "Rachel Daigle",
+            "name": "r.daigle",
+            "githubName": "hippo-rdaigle"
+        },
+        {
+            "id": "UF84QKDD1",
+            "realName": "Serena Vandersteen",
+            "name": "s.vandersteen",
+            "githubName": "serenav-hippo"
+        },
+        {
+            "id": "UHXV0J77C",
+            "realName": "Sean MacKay",
+            "name": "s.mackay",
+            "githubName": "hippo-smackay"
+        },
+        {
+            "id": "UJ9AA7D7F",
+            "realName": "Sehaj Singh",
+            "name": "s.singh",
+            "githubName": "singhsps"
+        }
+    ]
+}
