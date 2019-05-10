@@ -1,5 +1,4 @@
 {
-    "enablePrQuotes": true,
     "quotes": [
         "We don't make mistakes, just happy little accidents.",
         "There's nothing wrong with having a tree as a friend.",
@@ -22,7 +21,22 @@
         "Fishing relaxes me. It’s like yoga, except I still get to kill something.",
         "When people get too chummy with me, I like to call them by the wrong name to let them know I don’t really care about them.",
         "Keep your tears in your eyes where they belong.",
-        "That's technically correct. The best kind of correct."
+        "That's technically correct. The best kind of correct.",
+        "Moral support is half the work",
+        "I'm not a designer, but...",
+        "If I stop drinking all at once, I’m afraid the cumulative hangover will kill me.",
+        "You’re not my friend, you’re a Decepticon!",
+        "Can’t or won’t?",
+        "Danger zone!",
+        "I see your value now.",
+        "Let's do what people do. Let's get a house we can't afford and a dog that makes us angry.",
+        "What am I not good at?",
+        "If crazy people can't be at Hippo, then where are we supposed to go?",
+        "I'm no sociopath. I always know that what I'm doing is wrong. I'm just a bot who doesn't like taking tests, doing work, and getting yelled at. So if you think about it, I'm the sanest thing here.",
+        "The funny thing about being smart, is that you can get through most of life without ever having to do any work.",
+        "You can do whatever you want, you just have to know what that is.",
+        "Telling a programmer there's already a library to do X is like telling a songwriter there's already a song about love.",
+        "It's not creepy if you are lonely"
     ],
     "coolGuys": [
         "felipenvaz",
@@ -32,6 +46,7 @@
         "mdavidoshea",
         "serenav-hippo",
         "hippo-rdaigle",
-        "loconnor-hippocmms"
+        "singhsps",
+        "hippo-smackay"
     ]
 }

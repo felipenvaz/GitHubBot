@@ -121,3 +121,23 @@ export const addComment = async ({ owner, repository, comment, issueNumber }: IA
         return { status: res.status, content };
     });
 }
+
+export interface IApprovePRParams {
+    owner: string;
+    repository: string;
+    comment?: string;
+    issueNumber: number;
+}
+
+export const approvePR = async ({ owner, repository, comment, issueNumber }: IApprovePRParams) => {
+    return fetch(`${GITHUB_URL}repos/${owner}/${repository}/pulls/${issueNumber}/reviews`, {
+        method: 'POST',
+        body: JSON.stringify({
+            body: comment,
+            event: 'APPROVE'
+        })
+    }).then(async res => {
+        const content = await res.json();
+        return { status: res.status, content };
+    });
+}

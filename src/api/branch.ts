@@ -2,6 +2,7 @@ import { fetch } from '../fetch';
 import { GITHUB_URL } from '../constants';
 import EHttpCode from '../enums/EHttpCode';
 import logger, { ELogType } from '../logger';
+import IBranch from '../interfaces/IBranch';
 
 export const createBranch = async (owner: string, repository: string, ref: string, sha: string) => {
     logger.log(`Creating branch ${repository}/${ref}`);
@@ -35,5 +36,14 @@ export const deleteBranch = async (owner: string, repository: string, ref: strin
             logger.log(`There was an error deleting branch ${repository}/${ref}`, ELogType.warning);
             return false;
         }
+    });
+}
+
+export const getBranch = async (owner: string, repository: string, branch: string): Promise<IBranch> => {
+    return fetch(`${GITHUB_URL}repos/${owner}/${repository}/branches/${branch}`, {
+        method: 'GET'
+    }).then(async res => {
+        if (res.status === EHttpCode.success) return await res.json();
+        else null;
     });
 }

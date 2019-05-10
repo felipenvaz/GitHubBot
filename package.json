@@ -15,7 +15,8 @@
     "dev": "nodemon --exec \"npm start\"",
     "start": "node ./index.js",
     "merge:prod": "node ./lib/createTstProdBuild.js prod",
-    "merge:test": "node ./lib/createTstProdBuild.js test"
+    "merge:test": "node ./lib/createTstProdBuild.js test",
+    "createBranch": "npm run build && node ./lib/createBranch.js"
   },
   "dependencies": {
     "dotenv": "^6.0.0",

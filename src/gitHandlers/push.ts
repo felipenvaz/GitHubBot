@@ -1,5 +1,4 @@
 import IPush from '../interfaces/IPush';
-import { BOT_NAME } from '../env';
 import { getBranchType } from '../util';
 import EBranch from '../enums/EBranch';
 import { merge } from '../api/merge';
