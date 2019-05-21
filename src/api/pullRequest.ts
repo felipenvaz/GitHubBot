@@ -141,3 +141,32 @@ export const approvePR = async ({ owner, repository, comment, issueNumber }: IAp
         return { status: res.status, content };
     });
 }
+
+export interface IGetPRsParams {
+    owner: string;
+    repository: string;
+}
+
+export const getPRs = ({ owner, repository }: IGetPRsParams): Promise<{ status: number; content: IPullRequest[] }> => {
+    return fetch(`${GITHUB_URL}repos/${owner}/${repository}/pulls`, {
+        method: 'GET',
+    }).then(async res => {
+        const content = await res.json();
+        return { status: res.status, content };
+    });
+}
+
+export interface IGetPRReviewsParams {
+    owner: string;
+    repository: string;
+    number: number;
+}
+
+export const getPRReviews = ({ owner, repository, number }: IGetPRReviewsParams): Promise<{ status: number; content: any[] }> => {
+    return fetch(`${GITHUB_URL}repos/${owner}/${repository}/pulls/${number}/reviews`, {
+        method: 'GET',
+    }).then(async res => {
+        const content = await res.json();
+        return { status: res.status, content };
+    });
+}
