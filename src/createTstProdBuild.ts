@@ -5,6 +5,7 @@ import { merge } from './api/merge';
 import EBranch from './enums/EBranch';
 import logger, { ELogType } from './logger';
 import { createTag } from './api/tag';
+import { getCommit } from './api/commit';
 const appSettings = require('../appSettings.json');
 
 (async () => {
@@ -19,8 +20,8 @@ const appSettings = require('../appSettings.json');
   let repositories: IRepository[] =
     /* [
       {
-        name: 'KpiDashboard',
-        full_name: 'HippoCMMS/KpiDashboard',
+        name: 'WorkOrderRequestSite',
+        full_name: 'HippoCMMS/WorkOrderRequestSite',
         owner: { login: 'HippoCMMS' },
         archived: false
       }
@@ -52,17 +53,25 @@ const appSettings = require('../appSettings.json');
     if (response.nothingToMerge) nothingToMerge.push(name);
     else if (response.conflict) conflicts.push(name);
     else if (response.created) {
-      merged.push(name);
-      try {
-        if (isProd)
-          await createTag({
-            owner: owner.login,
-            repository: name,
-            sha: response.sha,
-            version
-          });
-      } catch (exception) {
-        logger.log(JSON.stringify(exception), ELogType.error);
+      const commit = await getCommit({
+        owner: owner.login,
+        repository: name,
+        sha: response.sha,
+      });
+      if (commit.files.length === 0) nothingToMerge.push(name);
+      else {
+        merged.push(name);
+        try {
+          if (isProd)
+            await createTag({
+              owner: owner.login,
+              repository: name,
+              sha: response.sha,
+              version
+            });
+        } catch (exception) {
+          logger.log(JSON.stringify(exception), ELogType.error);
+        }
       }
     }
   }
