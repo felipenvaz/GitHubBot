@@ -5,6 +5,7 @@ import { merge } from './api/merge';
 import EBranch from './enums/EBranch';
 import logger, { ELogType } from './logger';
 import { createTag } from './api/tag';
+const appSettings = require('../appSettings.json');
 
 (async () => {
   const [, , type, version] = process.argv;
@@ -15,7 +16,7 @@ import { createTag } from './api/tag';
     return;
   }
 
-  const repositories: IRepository[] =
+  let repositories: IRepository[] =
     /* [
       {
         name: 'KpiDashboard',
@@ -25,6 +26,7 @@ import { createTag } from './api/tag';
       }
     ]; */
     await listRepositories(ORGANIZATION);
+  repositories = repositories.filter(repository => !appSettings.ignored_repos.includes(repository.name));
 
   const nothingToMerge = [];
   const conflicts = [];
