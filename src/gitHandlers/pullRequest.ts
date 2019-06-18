@@ -3,6 +3,7 @@ import EBranch from '../enums/EBranch';
 import { deleteBranch } from '../api/branch';
 import { createReviewRequest, addComment, approvePR } from '../api/pullRequest';
 import { ENABLE_PR_QUOTES } from '../env';
+import { getMembers } from '../api/teams';
 const appSettings = require('../../appSettings.json');
 const prQuotes = require('../../prQuotes.json');
 
@@ -19,11 +20,12 @@ export const pullRequest = async ({ action, pull_request }: IPullRequestEvent) =
         case "reopened":
         case "synchronize":
             const { head: { ref, repo: { name, owner } }, number, user } = pull_request;
+            const getDevelopmentMembers = await getMembers();
             await createReviewRequest({
                 owner: owner.login,
                 repository: name,
                 number,
-                reviewers: [...appSettings.default_reviewers.filter(u => u !== user.login)]
+                reviewers: [...getDevelopmentMembers.map(u => u.login).filter(u => u !== user.login)]
             });
 
             if (appSettings.approve_prs.includes(user.login)) {

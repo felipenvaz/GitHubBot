@@ -7,3 +7,4 @@ export const ONLY_NEW_EVENTS = process.env.ONLY_NEW_EVENTS === 'true';
 export const GITHUB_WEBHOOK_SECRET = process.env.GITHUB_WEBHOOK_SECRET;
 export const ENABLE_PR_QUOTES = process.env.ENABLE_PR_QUOTES === 'true';
 export const SLACK_TOKEN = process.env.SLACK_TOKEN;
+export const HIPPO_DEVELOPMENT = process.env.HIPPO_DEVELOPMENT;
