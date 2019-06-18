@@ -7,6 +7,7 @@ import logger from '../logger';
 import ICommit from '../interfaces/ICommit';
 import { createBranch } from '../api/branch';
 import { createPullRequest, addAssignees } from '../api/pullRequest';
+import { postMessage } from '../api/slack/chat';
 const appSettings = require('../../appSettings.json');
 
 export const push = async ({ pusher, ref, repository, commits, head_commit, deleted }: IPush) => {
@@ -44,11 +45,17 @@ const autoMerge = (repository: IRepository, commits: ICommit[], head_sha: string
                 title: `Merge conflict ${newBranch} into ${base}`
             });
             if (pullRequest) {
+                const assignees = commits.map(c => c.committer.username).filter(u => u !== 'web-flow');
+                postMessage({
+                    channel: 'dev', text: `Hey slackers, I'm trying to do my job here, but, as always, one of you is blocking me.
+There was a conflict on ${repository.name}.
+You know me, I only work with blaming, and based on the committers, I'm going to point my finger at ${assignees.join(', ')}.
+Fix this ASAP, or somebody will have their ass kicked.` });
                 await addAssignees({
                     owner: repository.owner.login,
                     repository: repository.name,
                     issueNumber: pullRequest.number,
-                    assignees: commits.map(c => c.committer.username).filter(u => u !== 'web-flow')
+                    assignees
                 });
             }
         }
